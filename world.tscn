@@ -1,4 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://blri3e76o1pu2"]
+[gd_scene load_steps=9 format=3 uid="uid://blri3e76o1pu2"]
+
+[ext_resource type="Script" uid="uid://cxbd07m0doly8" path="res://player.gd" id="1_f3sb7"]
+[ext_resource type="Texture2D" uid="uid://dw5x0d1saa6ms" path="res://assets/autumn_field_puresky_4k.exr" id="2_fj7yv"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gv5m4"]
 height = 2.0405273
@@ -7,18 +10,30 @@ height = 2.0405273
 
 [sub_resource type="BoxMesh" id="BoxMesh_fj7yv"]
 
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_tlwt5"]
+panorama = ExtResource("2_fj7yv")
+
+[sub_resource type="Sky" id="Sky_aqk2v"]
+sky_material = SubResource("PanoramaSkyMaterial_tlwt5")
+
+[sub_resource type="Environment" id="Environment_036b0"]
+background_mode = 2
+sky = SubResource("Sky_aqk2v")
+
 [node name="World" type="Node3D"]
 
 [node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+script = ExtResource("1_f3sb7")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
-transform = Transform3D(0.5, 0, 0, 0, 1.6, 0, 0, 0, 1, -0.021549463, 2.4523513, 0)
+transform = Transform3D(0.5, 0, 0, 0, 1.6, 0, 0, 0, 1, -0.022, 0, 0)
 shape = SubResource("CapsuleShape3D_gv5m4")
 
-[node name="head" type="Node3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.021549463, 3.2433436, 0)
+[node name="Head" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.022, 0.8004806, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Player/head"]
+[node name="Camera3D" type="Camera3D" parent="Player/Head"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 
@@ -31,3 +46,6 @@ shape = SubResource("BoxShape3D_f3sb7")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
 transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 50, 0, 0, 0)
 mesh = SubResource("BoxMesh_fj7yv")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_036b0")
