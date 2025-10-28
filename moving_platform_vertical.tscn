@@ -1,17 +1,32 @@
-[gd_scene load_steps=7 format=3 uid="uid://7pqqh2a6u8n0"]
+[gd_scene load_steps=7 format=3 uid="uid://b08ockwqrd2q0"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_k1b7n"]
-size = Vector3(4, 0.2, 4)
+size = Vector3(4, 4, 0.2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_q06lf"]
-size = Vector3(4, 0.2, 4)
+size = Vector3(4, 4, 0.2)
 
 [sub_resource type="Curve3D" id="Curve3D_hrpga"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -0.020046711, 0, -0.022279302, 0, 0, 0, 0, 0, 0, 7.978599, 0, -0.010048615),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -0.0010056496, 0, 0.03147329, 0, 0, 0, 0, 0, 0, 0.036875725, 6.87341, 0.025752187),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
+
+[sub_resource type="Animation" id="Animation_oaxfr"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Path3D/PathFollow3D:progress_ratio")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
 
 [sub_resource type="Animation" id="Animation_f8lbu"]
 resource_name = "move"
@@ -30,31 +45,16 @@ tracks/0/keys = {
 "values": [0.0, 1.0]
 }
 
-[sub_resource type="Animation" id="Animation_oaxfr"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Path3D/PathFollow3D:progress_ratio")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_n0cw3"]
 _data = {
 &"RESET": SubResource("Animation_oaxfr"),
 &"move": SubResource("Animation_f8lbu")
 }
 
-[node name="MovingPlatform" type="Node3D"]
+[node name="MovingPlatformVertical" type="Node3D"]
 
 [node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
-transform = Transform3D(-0.0015288785, 0, -0.9998273, 0, 1, 0, 0.9998273, 0, -0.0015288785, 7.960978, 0, -0.010075559)
+transform = Transform3D(-5.9595013e-08, 0.99993986, -0.005514469, -0.000832944, -0.005515159, -0.9998141, -0.99983805, 4.5297493e-06, 0.00083292444, -0.0010056496, 0, 0.03147329)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="AnimatableBody3D"]
 mesh = SubResource("BoxMesh_k1b7n")
@@ -66,7 +66,7 @@ shape = SubResource("BoxShape3D_q06lf")
 curve = SubResource("Curve3D_hrpga")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
-transform = Transform3D(-0.0015288785, 0, -0.9998273, 0, 1, 0, 0.9998273, 0, -0.0015288785, -0.020046711, 0, -0.022279302)
+transform = Transform3D(-5.9595013e-08, 0.99993986, -0.005514469, -0.000832944, -0.005515159, -0.9998141, -0.99983805, 4.5297493e-06, 0.00083292444, -0.0010056496, 0, 0.03147329)
 
 [node name="RemoteTransform3D" type="RemoteTransform3D" parent="Path3D/PathFollow3D"]
 remote_path = NodePath("../../../AnimatableBody3D")
