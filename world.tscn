@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://blri3e76o1pu2"]
+[gd_scene load_steps=11 format=3 uid="uid://blri3e76o1pu2"]
 
 [ext_resource type="Script" uid="uid://cxbd07m0doly8" path="res://player.gd" id="1_f3sb7"]
 [ext_resource type="Texture2D" uid="uid://dw5x0d1saa6ms" path="res://assets/autumn_field_puresky_4k.exr" id="2_fj7yv"]
@@ -19,6 +19,12 @@ sky_material = SubResource("PanoramaSkyMaterial_tlwt5")
 [sub_resource type="Environment" id="Environment_036b0"]
 background_mode = 2
 sky = SubResource("Sky_aqk2v")
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_fj7yv"]
+vertices = PackedVector3Array(-49.5, 0.5, -49.5, -49.5, 0.5, 49.5, 49.5, 0.5, 49.5, 49.5, 0.5, -49.5)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_tlwt5"]
 
 [node name="World" type="Node3D"]
 
@@ -49,3 +55,10 @@ mesh = SubResource("BoxMesh_fj7yv")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_036b0")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_fj7yv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D"]
+transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 50, 0, 0, 0)
+mesh = SubResource("PlaneMesh_tlwt5")
