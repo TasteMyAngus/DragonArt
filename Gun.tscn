@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=3 uid="uid://dfiphw3gwi5cr"]
+
+[ext_resource type="Script" path="res://gun.gd" id="1_jpqjm"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_fry05"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_7c1qe"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jpqjm"]
+albedo_color = Color(0.45532206, 1.5617567, 2.0002813, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jpqjm"]
+material = SubResource("StandardMaterial3D_jpqjm")
+
+[sub_resource type="Animation" id="Animation_fry05"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D2")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, -0.15, 0)
+
+[sub_resource type="Animation" id="Animation_jpqjm"]
+resource_name = "Recoil"
+length = 0.07
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D2")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, -0.15, 0, 0.01, 1, 0, -0.15, -0.2, 0.04, 1, 0, -0.15, -0.1, 0.06, 1, 0, -0.15, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshInstance3D")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0.2, 0.01, 1, 0, 0, 0, 0.06666667, 1, 0, 0, 0.2)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7c1qe"]
+_data = {
+&"RESET": SubResource("Animation_fry05"),
+&"Recoil": SubResource("Animation_jpqjm")
+}
+
+[node name="Gun" type="Node3D"]
+script = ExtResource("1_jpqjm")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.5, 0, 0, 0.2)
+layers = 4
+mesh = SubResource("BoxMesh_fry05")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.2, 0, 0, 0, 0.1, 0, -0.15, 0)
+mesh = SubResource("BoxMesh_7c1qe")
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0.6217049)
+target_position = Vector3(0, 0, -100)
+
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0.5)
+
+[node name="BeamMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.02, 0, 0, 0, -8.7422775e-10, -0.02, 0, 0.02, -8.7422775e-10, 0, 0, 0.5)
+visible = false
+mesh = SubResource("CylinderMesh_jpqjm")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_7c1qe")
+}
