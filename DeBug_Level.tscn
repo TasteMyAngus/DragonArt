@@ -1,13 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://ckwcsracbrrxf"]
+[gd_scene load_steps=12 format=3 uid="uid://ckwcsracbrrxf"]
 
-[ext_resource type="PackedScene" uid="uid://1vfo1m24enjf" path="res://player.tscn" id="1_4fbqt"]
+[ext_resource type="PackedScene" uid="uid://1vfo1m24enjf" path="res://Player/player.tscn" id="1_4fbqt"]
 [ext_resource type="Texture2D" uid="uid://bupiliuuqu5at" path="res://assets/Brickwall_Protype.png" id="2_52yuv"]
 [ext_resource type="Texture2D" uid="uid://dw5x0d1saa6ms" path="res://assets/autumn_field_puresky_4k.exr" id="2_hmwma"]
-[ext_resource type="PackedScene" uid="uid://c133v08qqjlp2" path="res://crosshair_layer.tscn" id="3_jwpby"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dslko"]
-albedo_texture = ExtResource("2_52yuv")
-uv1_scale = Vector3(10, 10, 10)
+[ext_resource type="PackedScene" uid="uid://c133v08qqjlp2" path="res://Player/crosshair_layer.tscn" id="3_jwpby"]
+[ext_resource type="Texture2D" uid="uid://46gxsffb50gs" path="res://assets/Brickwall 01.png" id="5_dslko"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_jwpby"]
 panorama = ExtResource("2_hmwma")
@@ -21,19 +18,38 @@ background_color = Color(0.4442158, 0.4442158, 0.4442158, 1)
 sky = SubResource("Sky_4fbqt")
 ambient_light_color = Color(1, 1, 1, 1)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gwviu"]
+albedo_texture = ExtResource("5_dslko")
+uv1_scale = Vector3(4, 4, 4)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_dslko"]
+region_min_size = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dslko"]
+albedo_texture = ExtResource("2_52yuv")
+uv1_scale = Vector3(10, 10, 10)
+
 [node name="Node3D" type="Node3D"]
 
 [node name="Player" parent="." instance=ExtResource("1_4fbqt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2508483, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8011556, 0)
 disable_mode = 1
-
-[node name="Spawn Floor" type="CSGBox3D" parent="."]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.13656044, -1.7156701, 0.63302207)
-use_collision = true
-size = Vector3(11.093201, 0.29736328, 13.272888)
-material = SubResource("StandardMaterial3D_dslko")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_hmwma")
 
 [node name="CrosshairLayer" parent="." instance=ExtResource("3_jwpby")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(100, 0, 0, 0, 50, 0, 0, 0, 1, 0, 25.139477, -65.99061)
+material = SubResource("StandardMaterial3D_gwviu")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+transform = Transform3D(0.9999999, 0, 0, 0, 1, 0, 0, 0, 0.9999999, 0, 0, 0)
+navigation_mesh = SubResource("NavigationMesh_dslko")
+
+[node name="Spawn Floor" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(10.000001, 0, 0, 0, 1, 0, 0, 0, 10.000001, -0.13656045, -0.14291668, 0.6330221)
+use_collision = true
+size = Vector3(11.093201, 0.29736328, 13.272888)
+material = SubResource("StandardMaterial3D_dslko")

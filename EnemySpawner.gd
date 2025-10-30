@@ -13,12 +13,24 @@ extends Node3D
 
 @export var use_floor_raycast: bool = true
 @export var floor_max_drop: float = 20.0
-@export var collider_half_height: float = 1.0   # (capsule) height/2 + radius
-@export var floor_offset_epsilon: float = 0.05  # tiny lift to avoid clipping
+@export var collider_half_height: float = 1.0
+@export var floor_offset_epsilon: float = 0.05
 
 @export var parent_under_spawner: bool = true
 @export var draw_debug_spheres: bool = true
 @export var log_verbose: bool = true
+
+# Random spawn settings
+@export var enable_random_spawning: bool = true
+@export var spawn_interval_min: float = 2.0
+@export var spawn_interval_max: float = 5.0
+@export var spawn_count_per_tick: int = 1
+
+# Distance-based spawn rate
+@export var distance_spawn_min: float = 5.0
+@export var distance_spawn_max: float = 50.0
+@export var interval_near: float = 1.0
+@export var interval_far: float = 6.0
 
 var _nav_map: RID
 var _nav_ready := false
@@ -29,9 +41,9 @@ func _ready() -> void:
 	call_deferred("_post_ready")
 
 func _post_ready() -> void:
-	# Let regions register; then wait for nav sync
 	await get_tree().create_timer(0.2).timeout
 	await _await_nav_ready()
+
 	if spawn_on_ready:
 		var spawned := spawn_batch()
 		if spawned.is_empty():
@@ -39,7 +51,9 @@ func _post_ready() -> void:
 		else:
 			print("EnemySpawner: finished spawning ", spawned.size(), " enemies.")
 
-	# Debug: check if player node is found
+	if enable_random_spawning:
+		_start_random_spawn_loop()
+
 	var player_node: Node3D = null
 	if player_path != NodePath():
 		player_node = get_node_or_null(player_path) as Node3D
@@ -47,7 +61,6 @@ func _post_ready() -> void:
 		push_warning("EnemySpawner: Could not find player node at path: " + str(player_path))
 	else:
 		print("EnemySpawner: Found player node at path: " + str(player_path))
-		# Add player to 'player' group if not already
 		if not player_node.is_in_group("player"):
 			player_node.add_to_group("player")
 			print("EnemySpawner: Added player node to 'player' group.")
@@ -64,6 +77,33 @@ func _await_nav_ready() -> void:
 		await get_tree().physics_frame
 	_nav_ready = NavigationServer3D.map_get_iteration_id(_nav_map) != start_id
 
+func _start_random_spawn_loop() -> void:
+	spawn_random_tick()
+
+func spawn_random_tick() -> void:
+	var player_node: Node3D = null
+	if player_path != NodePath():
+		player_node = get_node_or_null(player_path) as Node3D
+
+	var delay := spawn_interval_max
+	var dist := 0.0
+	if player_node:
+		dist = global_transform.origin.distance_to(player_node.global_transform.origin)
+		var t: float = clamp((dist - distance_spawn_min) / (distance_spawn_max - distance_spawn_min), 0.0, 1.0)
+		delay = lerp(interval_near, interval_far, t)
+
+	await get_tree().create_timer(delay).timeout
+
+	var original_count := count
+	count = spawn_count_per_tick
+	var spawned := spawn_batch()
+	count = original_count
+
+	if log_verbose:
+		print("EnemySpawner: Distance = ", dist, " → delay = ", delay, "s → spawned ", spawned.size())
+
+	spawn_random_tick()
+
 func spawn_batch() -> Array:
 	if enemy_scene == null:
 		push_error("EnemySpawner: 'enemy_scene' is NOT set.")
@@ -75,7 +115,6 @@ func spawn_batch() -> Array:
 	var base := global_transform.origin
 	var points := _vogel_points_around(base, count, separation)
 
-	# Resolve the player node once (ok if null; enemy will keep trying)
 	var player_node: Node3D = null
 	if player_path != NodePath():
 		player_node = get_node_or_null(player_path) as Node3D
@@ -87,7 +126,7 @@ func spawn_batch() -> Array:
 
 		if use_navmesh_snap and _nav_ready and _nav_map != RID():
 			pos = NavigationServer3D.map_get_closest_point(_nav_map, desired)
-		
+
 		if use_floor_raycast:
 			var from := pos + Vector3.UP * 2.0
 			var to := from + Vector3.DOWN * floor_max_drop
@@ -98,28 +137,21 @@ func spawn_batch() -> Array:
 			if hit.has("position"):
 				pos.y = hit.position.y + collider_half_height + floor_offset_epsilon
 			else:
-				# fallback to old offset if no hit
 				pos.y += spawn_height_offset
 		else:
 			pos.y += spawn_height_offset
-
 
 		var inst := enemy_scene.instantiate()
 		if inst == null:
 			push_error("EnemySpawner: instantiate() returned null.")
 			continue
 
-		# set exported props BEFORE parenting
 		if player_path != NodePath():
 			if inst.get_property_list().any(func(p): return p.name == "player_path"):
 				inst.set("player_path", player_path)
 		if player_node and inst.get_property_list().any(func(p): return p.name == "player_ref"):
 			inst.set("player_ref", player_node)
 
-		# (rest of your loop unchanged…)
-
-
-		# Parent
 		if parent_under_spawner:
 			add_child(inst)
 			if log_verbose: print("[", idx, "] parented under spawner: ", name)
@@ -128,7 +160,6 @@ func spawn_batch() -> Array:
 			parent.add_child(inst)
 			if log_verbose: print("[", idx, "] parented under: ", parent.name)
 
-		# Bind agent to this map + seed initial target (if we have a player_node)
 		var agent: NavigationAgent3D = inst.get_node_or_null("NavigationAgent3D")
 		if agent == null:
 			agent = inst.find_child("NavigationAgent3D", true, false)
@@ -165,7 +196,6 @@ func spawn_batch() -> Array:
 		if inst is PhysicsBody3D:
 			spawned.append(inst as PhysicsBody3D)
 
-	# No-collide grace
 	if no_collide_seconds > 0.0 and spawned.size() > 1:
 		for i in range(spawned.size()):
 			for j in range(i + 1, spawned.size()):
@@ -184,7 +214,7 @@ func spawn_batch() -> Array:
 
 func _vogel_points_around(center: Vector3, n: int, min_sep: float) -> Array[Vector3]:
 	var pts: Array[Vector3] = []
-	var phi: float = PI * (3.0 - sqrt(5.0))
+	var phi: float = PI * (3.0 - sqrt(5.0))  # golden angle
 	var c: float = max(min_sep, 0.01) * 0.6
 	for k: int in range(n):
 		var r: float = c * sqrt(float(k) + 1.0)

@@ -2,7 +2,7 @@ extends CharacterBody3D
 
 @export var max_health := 100
 
-@export var movement_speed: float = 3.0
+@export var movement_speed: float = 7.0
 @export var retarget_interval: float = 0.15
 @export var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var turn_speed: float = 6.0

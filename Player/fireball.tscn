@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=3 uid="uid://cxe4tg71805ib"]
+
+[ext_resource type="Script" uid="uid://bpbt5cag1lies" path="res://Player/fireball.gd" id="1_7tjqq"]
+[ext_resource type="Texture2D" uid="uid://ci8y4cynpfc25" path="res://assets/10587.jpg" id="2_6fusv"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7tjqq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g768h"]
+albedo_texture = ExtResource("2_6fusv")
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_tajta"]
+material = SubResource("StandardMaterial3D_g768h")
+height = 1.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_6fusv"]
+
+[node name="Fireball" type="RigidBody3D"]
+script = ExtResource("1_7tjqq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_7tjqq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_tajta")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="ExplosionArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExplosionArea"]
+shape = SubResource("SphereShape3D_6fusv")

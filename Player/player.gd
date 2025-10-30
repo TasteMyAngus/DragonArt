@@ -7,6 +7,10 @@ extends CharacterBody3D
 @export var mouse_sensitivity: float = 0.0025
 @export var jump_velocity: float = 4.8
 @export var gravity: float = 7.0
+@export var fireball_scene: PackedScene
+@export var fireball_speed: float = 20.0
+@export var fireball_spawn_offset: Vector3 = Vector3(0, 1.5, -1)
+
 
 @onready var head: Node3D = $Head
 @onready var cam: Camera3D = $Head/Camera3D
@@ -49,7 +53,27 @@ func _physics_process(delta: float) -> void:
 	# Shooting
 	if Input.is_action_just_pressed("shoot") and gun:
 		gun.shoot()
+	if Input.is_action_just_pressed("alt_fire") and gun:
+		gun.shoot_strong()
+	#
+	if Input.is_action_just_pressed("throw_grenade"):
+		shoot_fireball()
 
+func shoot_fireball():
+	if fireball_scene == null:
+		push_warning("No fireball scene assigned.")
+		return
+
+	var fireball = fireball_scene.instantiate()
+	var spawn_pos = cam.global_transform.origin + cam.global_transform.basis * fireball_spawn_offset
+	fireball.global_transform.origin = spawn_pos
+	fireball.look_at(spawn_pos + cam.global_transform.basis.z * -1, Vector3.UP)
+
+	get_tree().current_scene.add_child(fireball)
+
+	if fireball.has_method("launch"):
+		fireball.launch(cam.global_transform.basis.z * -fireball_speed)
+		
 func _apply_mouse_look(event: InputEventMouseMotion) -> void:
 	rotate_y(-event.relative.x * mouse_sensitivity)
 	head.rotate_x(-event.relative.y * mouse_sensitivity)

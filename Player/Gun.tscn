@@ -1,10 +1,23 @@
-[gd_scene load_steps=9 format=3 uid="uid://dfiphw3gwi5cr"]
+[gd_scene load_steps=12 format=3 uid="uid://dfiphw3gwi5cr"]
 
-[ext_resource type="Script" path="res://gun.gd" id="1_jpqjm"]
+[ext_resource type="Script" uid="uid://nildrlkwxejw" path="res://Player/gun.gd" id="1_mrkhy"]
+[ext_resource type="Texture2D" uid="uid://cm4cw5a8wuvj6" path="res://assets/brushed-silver-metal-texture-polished-metal-texture-background-with-light-reflection-abstract-texture-background-free-photo.jpg" id="2_mm31u"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7c1qe"]
+albedo_color = Color(0.8049066, 0.14182156, 0.4567623, 1)
+albedo_texture = ExtResource("2_mm31u")
+metallic = 1.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_fry05"]
+material = SubResource("StandardMaterial3D_7c1qe")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1psom"]
+albedo_color = Color(0.053051017, 0.25922462, 0.51526845, 1)
+albedo_texture = ExtResource("2_mm31u")
+metallic = 0.46
 
 [sub_resource type="BoxMesh" id="BoxMesh_7c1qe"]
+material = SubResource("StandardMaterial3D_1psom")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jpqjm"]
 albedo_color = Color(0.45532206, 1.5617567, 2.0002813, 1)
@@ -13,7 +26,7 @@ albedo_color = Color(0.45532206, 1.5617567, 2.0002813, 1)
 material = SubResource("StandardMaterial3D_jpqjm")
 
 [sub_resource type="Animation" id="Animation_fry05"]
-length = 0.001
+length = 0.07
 tracks/0/type = "position_3d"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -21,6 +34,13 @@ tracks/0/path = NodePath("MeshInstance3D2")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = PackedFloat32Array(0, 1, 0, -0.15, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshInstance3D")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0.2)
 
 [sub_resource type="Animation" id="Animation_jpqjm"]
 resource_name = "Recoil"
@@ -39,6 +59,20 @@ tracks/1/path = NodePath("MeshInstance3D")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0.2, 0.01, 1, 0, 0, 0, 0.06666667, 1, 0, 0, 0.2)
+tracks/2/type = "rotation_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshInstance3D")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array()
+tracks/3/type = "rotation_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshInstance3D2")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.0333, 1, 90, 1, 4, 1)
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_7c1qe"]
 _data = {
@@ -47,7 +81,7 @@ _data = {
 }
 
 [node name="Gun" type="Node3D"]
-script = ExtResource("1_jpqjm")
+script = ExtResource("1_mrkhy")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.5, 0, 0, 0.2)

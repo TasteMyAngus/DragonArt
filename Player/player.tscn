@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://1vfo1m24enjf"]
+[gd_scene load_steps=6 format=3 uid="uid://1vfo1m24enjf"]
 
-[ext_resource type="Script" uid="uid://cxbd07m0doly8" path="res://player.gd" id="1_4flbx"]
-[ext_resource type="PackedScene" uid="uid://dfiphw3gwi5cr" path="res://Gun.tscn" id="2_onrkg"]
-[ext_resource type="PackedScene" uid="uid://c133v08qqjlp2" path="res://crosshair_layer.tscn" id="3_i3pqv"]
+[ext_resource type="Script" uid="uid://cxbd07m0doly8" path="res://Player/player.gd" id="1_4flbx"]
+[ext_resource type="PackedScene" uid="uid://dfiphw3gwi5cr" path="res://Player/Gun.tscn" id="2_onrkg"]
+[ext_resource type="PackedScene" uid="uid://c133v08qqjlp2" path="res://Player/crosshair_layer.tscn" id="3_i3pqv"]
+[ext_resource type="PackedScene" uid="uid://cxe4tg71805ib" path="res://Player/fireball.tscn" id="4_gwnis"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gv5m4"]
 height = 2.0405273
@@ -24,3 +25,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.022, 0.8004806, 0)
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.46896, -0.15974784, -0.54069763)
 
 [node name="CrosshairLayer" parent="." instance=ExtResource("3_i3pqv")]
+
+[node name="fireball" parent="." instance=ExtResource("4_gwnis")]

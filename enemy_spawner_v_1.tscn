@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bogg5avx326gs"]
+
+[ext_resource type="Script" uid="uid://8hctvdcn3fhl" path="res://EnemySpawner.gd" id="1_2fs0x"]
+[ext_resource type="PackedScene" uid="uid://dndwys1devlwi" path="res://Enemy.tscn" id="2_q34c5"]
+
+[node name="EnemySpawnerV1" type="Node3D"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+script = ExtResource("1_2fs0x")
+enemy_scene = ExtResource("2_q34c5")
+count = 3
+player_path = NodePath("../Player")
