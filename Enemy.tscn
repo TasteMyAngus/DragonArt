@@ -25,9 +25,9 @@ mesh = SubResource("BoxMesh_tlwt5")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 debug_enabled = true
 
-[node name="HurtBox" type="Area3D" parent="." groups=["damageable"]]
+[node name="Hurtbox" type="Area3D" parent="." groups=["damageable"]]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.014892578, 0)
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="HurtBox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
 shape = SubResource("SphereShape3D_tt7e2")
