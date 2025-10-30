@@ -1,58 +1,156 @@
 extends CharacterBody3D
 
+@export var max_health := 100
+
 @export var movement_speed: float = 3.0
 @export var retarget_interval: float = 0.15
 @export var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
-@export var turn_speed: float = 6.0  
+@export var turn_speed: float = 6.0
+
+@export var player_path: NodePath          
+@export var player_ref: Node3D              
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
-@export var player_path: NodePath
-@onready var player: Node3D = get_node(player_path)
+var player: Node3D = null
 
 var _retarget_timer := 0.0
+var _nav_map: RID
+var _last_target: Vector3 = Vector3.INF
+var _resolve_attempts := 0
+var health := 0
 
 func _ready() -> void:
 	navigation_agent.path_desired_distance = 0.3
 	navigation_agent.target_desired_distance = 0.3
 	navigation_agent.avoidance_enabled = false
+	navigation_agent.debug_enabled = true
+
+	_nav_map = get_world_3d().navigation_map
+	if navigation_agent.get_navigation_map() == RID():
+		navigation_agent.set_navigation_map(_nav_map)
+		
+	health = max_health
+	# Ensure we're damageable by bullets that look for this:
+	add_to_group("damageable")
+	# Connect hurtbox if not connected in the editor
+	if $Hurtbox and not $Hurtbox.is_connected("body_entered", Callable(self, "_on_hurtbox_body_entered")):
+		$Hurtbox.body_entered.connect(_on_hurtbox_body_entered)
+		
+	_resolve_player()
 	call_deferred("_post_ready")
 
 func _post_ready() -> void:
 	await get_tree().physics_frame
-	_refresh_target()
+	if player == null:
+		_resolve_player()
+	_retarget_now()
+	
+func take_damage(amount: int, hit_pos: Vector3 = global_position) -> void:
+	if amount <= 0:
+		return
+	health = max(health - amount, 0)
+	# (Optional) small hit reaction:
+	# show_hit_flash()
+	if health == 0:
+		die()
+
+func die() -> void:
+	# TODO: play death anim/SFX/loo
+	queue_free()
+
+func _on_hurtbox_body_entered(body: Node) -> void:
+	# Bullets will call take_damage themselves, but this allows
+	# alternate damage sources that just enter the hurtbox.
+	
+	if body.has_method("get_bullet_damage"):
+		take_damage(body.get_bullet_damage(), body.global_transform.origin)
+		if body.has_method("on_bullet_resolved"):
+			body.on_bullet_resolved()
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
+	if player == null and _resolve_attempts < 120:
+		_resolve_player()
 
 	_retarget_timer -= delta
 	if _retarget_timer <= 0.0:
-		_refresh_target()
-		_retarget_timer = retarget_interval
+		_retarget_now()
 
-	if not navigation_agent.is_navigation_finished():
+	var path := navigation_agent.get_current_navigation_path()
+	if path.size() > 1 and not navigation_agent.is_navigation_finished():
 		var next_point: Vector3 = navigation_agent.get_next_path_position()
 		var to_next: Vector3 = next_point - global_position
 		to_next.y = 0.0
+		var v := to_next.normalized() * movement_speed
+		velocity.x = v.x
+		velocity.z = v.z
+	else:
+		if player:
+			var dir := player.global_transform.origin - global_position
+			dir.y = 0.0
+			dir = dir.normalized()
+			velocity.x = dir.x * movement_speed
+			velocity.z = dir.z * movement_speed
+		else:
+			velocity.x = move_toward(velocity.x, 0.0, movement_speed)
+			velocity.z = move_toward(velocity.z, 0.0, movement_speed)
 
-		var desired_velocity := to_next.normalized() * movement_speed
-		velocity.x = desired_velocity.x
-		velocity.z = desired_velocity.z
-
-	# face the player 
+	
 	if player:
-		var look_dir := player.global_transform.origin - global_transform.origin
-		look_dir.y = 0.0
-		if look_dir.length() > 0.001:
-			var target_basis := Basis().looking_at(look_dir.normalized(), Vector3.UP)
+		var look := player.global_transform.origin - global_transform.origin
+		look.y = 0.0
+		if look.length() > 0.001:
+			var target_basis := Basis().looking_at(look.normalized(), Vector3.UP)
 			global_transform.basis = global_transform.basis.slerp(
 				target_basis,
 				clamp(turn_speed * delta, 0.0, 1.0)
-			)
-	# 
+			).orthonormalized()
 
 	move_and_slide()
 
-func _refresh_target() -> void:
-	if player:
-		navigation_agent.set_target_position(player.global_transform.origin)
+func _retarget_now() -> void:
+	_retarget_timer = retarget_interval
+	if player == null:
+		return
+
+	if navigation_agent.get_navigation_map() == RID():
+		navigation_agent.set_navigation_map(_nav_map)
+
+	var player_pos: Vector3 = player.global_transform.origin
+	var nav_map: RID = get_world_3d().navigation_map
+	var target_on_nav: Vector3 = player_pos
+	if nav_map != RID():
+		target_on_nav = NavigationServer3D.map_get_closest_point(nav_map, player_pos)
+
+	if _last_target == Vector3.INF or _last_target.distance_to(target_on_nav) > 0.2:
+		navigation_agent.set_target_position(target_on_nav)
+		_last_target = target_on_nav
+
+		var path := navigation_agent.get_current_navigation_path()
+		if path.size() > 0:
+			print("Enemy path pts=", path.size(),
+				  " first=", path[0],
+				  " last=", path[path.size() - 1],
+				  " target_on_nav=", target_on_nav)
+		else:
+			print("Enemy path pts=0  target_on_nav=", target_on_nav)
+
+func _resolve_player() -> void:
+	_resolve_attempts += 1
+	if player_ref and is_instance_valid(player_ref):
+		player = player_ref
+		return
+	if player == null and player_path != NodePath():
+		var by_path := get_node_or_null(player_path) as Node3D
+		if by_path:
+			player = by_path
+			return
+	if player == null:
+		var by_group := get_tree().get_first_node_in_group("player") as Node3D
+		if by_group:
+			player = by_group
+			return
+	# Debug 
+	if _resolve_attempts % 30 == 0:
+		print("Enemy still resolving player... attempt #", _resolve_attempts)

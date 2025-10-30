@@ -15,6 +15,11 @@ run/main_scene="uid://bx8elhffrdvid"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://assets/icon.svg"
 
+[global_group]
+
+player=""
+damageable=""
+
 [input]
 
 move_forward={
