@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://dndwys1devlwi"]
+
+[ext_resource type="Script" uid="uid://byoma02kmigw6" path="res://enemy.gd" id="1_tt7e2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tlwt5"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_tlwt5"]
+
+[node name="enemy" type="CharacterBody3D"]
+floor_snap_length = 0.5
+script = ExtResource("1_tt7e2")
+gravity = 9.8
+player_path = NodePath("../Player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027409196, 0)
+shape = SubResource("BoxShape3D_tlwt5")
+debug_color = Color(0.9372549, 0.09411765, 0.57254905, 1)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_tlwt5")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." groups=["player"]]
+debug_enabled = true

@@ -1,9 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://blri3e76o1pu2"]
+[gd_scene load_steps=14 format=3 uid="uid://blri3e76o1pu2"]
 
 [ext_resource type="Script" uid="uid://cxbd07m0doly8" path="res://player.gd" id="1_f3sb7"]
 [ext_resource type="Texture2D" uid="uid://dw5x0d1saa6ms" path="res://assets/autumn_field_puresky_4k.exr" id="2_fj7yv"]
-[ext_resource type="PackedScene" uid="uid://7pqqh2a6u8n0" path="res://moving_platform.tscn" id="3_tlwt5"]
-[ext_resource type="Script" uid="uid://byoma02kmigw6" path="res://enemy.gd" id="4_aqk2v"]
+[ext_resource type="PackedScene" uid="uid://hnyjstadum0d" path="res://moving_platform.tscn" id="3_tlwt5"]
+[ext_resource type="Script" uid="uid://8hctvdcn3fhl" path="res://EnemySpawner.gd" id="4_036b0"]
+[ext_resource type="PackedScene" uid="uid://dndwys1devlwi" path="res://Enemy.tscn" id="5_dwbse"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gv5m4"]
 height = 2.0405273
@@ -24,18 +25,14 @@ background_mode = 2
 sky = SubResource("Sky_aqk2v")
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_fj7yv"]
-vertices = PackedVector3Array(-49.5, 0.5, -49.5, -49.5, 0.5, 49.5, 49.5, 0.5, 49.5, 49.5, 0.5, -49.5)
+vertices = PackedVector3Array(-49.5, 0.7107913, -49.5, -49.5, 0.7107913, 49.5, 49.5, 0.7107913, 49.5, 49.5, 0.7107913, -49.5)
 polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_tlwt5"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_tlwt5"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_tlwt5"]
-
 [node name="World" type="Node3D"]
 
-[node name="Player" type="CharacterBody3D" parent="."]
+[node name="Player" type="CharacterBody3D" parent="." groups=["player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.736, 2.15, 0)
 script = ExtResource("1_f3sb7")
 
@@ -50,13 +47,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.022, 0.8004806, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="Floor" type="StaticBody3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
 transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 50, 0.10681152, 0, 0.26245117)
 shape = SubResource("BoxShape3D_f3sb7")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
 transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, 0, 0)
 mesh = SubResource("BoxMesh_fj7yv")
 
@@ -74,17 +71,9 @@ mesh = SubResource("PlaneMesh_tlwt5")
 [node name="MovingPlatform" parent="." instance=ExtResource("3_tlwt5")]
 transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 20, 200.9729, 0, 0)
 
-[node name="enemy" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 38.598)
-script = ExtResource("4_aqk2v")
+[node name="EnemySpawnerV1" type="Node3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -39.530155, 1.6043985, -39.932213)
+script = ExtResource("4_036b0")
+enemy_scene = ExtResource("5_dwbse")
+count = 3
 player_path = NodePath("../Player")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027409196, 0)
-shape = SubResource("BoxShape3D_tlwt5")
-debug_color = Color(0.9372549, 0.09411765, 0.57254905, 1)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="enemy"]
-mesh = SubResource("BoxMesh_tlwt5")
-
-[node name="NavigationAgent3D" type="NavigationAgent3D" parent="enemy"]
