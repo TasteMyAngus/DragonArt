@@ -33,6 +33,7 @@ polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
 [node name="World" type="Node3D"]
 
 [node name="Player" parent="." instance=ExtResource("1_fj7yv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7652016, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 

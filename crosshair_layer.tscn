@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://c133v08qqjlp2"]
+
+[ext_resource type="Texture2D" uid="uid://dr46pgsahqyrx" path="res://assets/Crosshair.png.tres" id="1_0ipbv"]
+
+[node name="CrosshairLayer" type="CanvasLayer"]
+
+[node name="Crosshair" type="TextureRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.3, 0.3)
+focus_behavior_recursive = 1
+texture = ExtResource("1_0ipbv")
+expand_mode = 1
+stretch_mode = 3
