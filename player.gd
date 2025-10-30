@@ -10,6 +10,9 @@ extends CharacterBody3D
 
 @onready var head: Node3D = $Head
 @onready var cam: Camera3D = $Head/Camera3D
+@onready var gun = $Head/Camera3D/Gun
+
+
 
 var _mouse_captured := true
 

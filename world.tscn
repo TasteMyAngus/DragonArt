@@ -1,12 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://blri3e76o1pu2"]
+[gd_scene load_steps=14 format=3 uid="uid://bx8elhffrdvid"]
 
-[ext_resource type="Script" uid="uid://cxbd07m0doly8" path="res://player.gd" id="1_f3sb7"]
+[ext_resource type="PackedScene" uid="uid://1vfo1m24enjf" path="res://player.tscn" id="1_fj7yv"]
 [ext_resource type="Texture2D" uid="uid://dw5x0d1saa6ms" path="res://assets/autumn_field_puresky_4k.exr" id="2_fj7yv"]
-[ext_resource type="PackedScene" uid="uid://7pqqh2a6u8n0" path="res://moving_platform.tscn" id="3_tlwt5"]
-[ext_resource type="Script" uid="uid://byoma02kmigw6" path="res://enemy.gd" id="4_aqk2v"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gv5m4"]
-height = 2.0405273
+[ext_resource type="PackedScene" uid="uid://7pqqh2a6u8n0" path="res://moving_platform_horizontal.tscn" id="3_tlwt5"]
+[ext_resource type="Script" path="res://enemy.gd" id="4_aqk2v"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_f3sb7"]
 size = Vector3(1.9876709, 1, 2.003662)
@@ -35,18 +32,7 @@ polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
 
 [node name="World" type="Node3D"]
 
-[node name="Player" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.736, 2.15, 0)
-script = ExtResource("1_f3sb7")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
-transform = Transform3D(0.5, 0, 0, 0, 1.6, 0, 0, 0, 1, -0.022000074, 0, 0)
-shape = SubResource("CapsuleShape3D_gv5m4")
-
-[node name="Head" type="Node3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.022, 0.8004806, 0)
-
-[node name="Camera3D" type="Camera3D" parent="Player/Head"]
+[node name="Player" parent="." instance=ExtResource("1_fj7yv")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 
