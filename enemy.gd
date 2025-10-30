@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+@export var max_health := 100
+
 @export var movement_speed: float = 3.0
 @export var retarget_interval: float = 0.15
 @export var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -15,6 +17,7 @@ var _retarget_timer := 0.0
 var _nav_map: RID
 var _last_target: Vector3 = Vector3.INF
 var _resolve_attempts := 0
+var health := 0
 
 func _ready() -> void:
 	navigation_agent.path_desired_distance = 0.3
@@ -25,7 +28,14 @@ func _ready() -> void:
 	_nav_map = get_world_3d().navigation_map
 	if navigation_agent.get_navigation_map() == RID():
 		navigation_agent.set_navigation_map(_nav_map)
-
+		
+	health = max_health
+	# Ensure we're damageable by bullets that look for this:
+	add_to_group("damageable")
+	# Connect hurtbox if not connected in the editor
+	if $Hurtbox and not $Hurtbox.is_connected("body_entered", Callable(self, "_on_hurtbox_body_entered")):
+		$Hurtbox.body_entered.connect(_on_hurtbox_body_entered)
+		
 	_resolve_player()
 	call_deferred("_post_ready")
 
@@ -34,6 +44,28 @@ func _post_ready() -> void:
 	if player == null:
 		_resolve_player()
 	_retarget_now()
+	
+func take_damage(amount: int, hit_pos: Vector3 = global_position) -> void:
+	if amount <= 0:
+		return
+	health = max(health - amount, 0)
+	# (Optional) small hit reaction:
+	# show_hit_flash()
+	if health == 0:
+		die()
+
+func die() -> void:
+	# TODO: play death anim/SFX/loo
+	queue_free()
+
+func _on_hurtbox_body_entered(body: Node) -> void:
+	# Bullets will call take_damage themselves, but this allows
+	# alternate damage sources that just enter the hurtbox.
+	
+	if body.has_method("get_bullet_damage"):
+		take_damage(body.get_bullet_damage(), body.global_transform.origin)
+		if body.has_method("on_bullet_resolved"):
+			body.on_bullet_resolved()
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
