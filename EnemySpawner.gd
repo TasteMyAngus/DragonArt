@@ -39,6 +39,19 @@ func _post_ready() -> void:
 		else:
 			print("EnemySpawner: finished spawning ", spawned.size(), " enemies.")
 
+	# Debug: check if player node is found
+	var player_node: Node3D = null
+	if player_path != NodePath():
+		player_node = get_node_or_null(player_path) as Node3D
+	if player_node == null:
+		push_warning("EnemySpawner: Could not find player node at path: " + str(player_path))
+	else:
+		print("EnemySpawner: Found player node at path: " + str(player_path))
+		# Add player to 'player' group if not already
+		if not player_node.is_in_group("player"):
+			player_node.add_to_group("player")
+			print("EnemySpawner: Added player node to 'player' group.")
+
 func _await_nav_ready() -> void:
 	if _nav_map == RID():
 		await get_tree().physics_frame

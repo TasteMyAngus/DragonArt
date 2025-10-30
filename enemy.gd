@@ -5,8 +5,8 @@ extends CharacterBody3D
 @export var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var turn_speed: float = 6.0
 
-@export var player_path: NodePath           # optional (spawner sets this)
-@export var player_ref: Node3D              # optional direct reference (spawner sets this)
+@export var player_path: NodePath          
+@export var player_ref: Node3D              
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 var player: Node3D = null
@@ -26,13 +26,11 @@ func _ready() -> void:
 	if navigation_agent.get_navigation_map() == RID():
 		navigation_agent.set_navigation_map(_nav_map)
 
-	# First attempt
 	_resolve_player()
 	call_deferred("_post_ready")
 
 func _post_ready() -> void:
 	await get_tree().physics_frame
-	# Try again after one frame in case spawner finished wiring
 	if player == null:
 		_resolve_player()
 	_retarget_now()
@@ -40,8 +38,6 @@ func _post_ready() -> void:
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
-
-	# Keep trying to resolve player for a short while if still null
 	if player == null and _resolve_attempts < 120:
 		_resolve_player()
 
@@ -58,10 +54,17 @@ func _physics_process(delta: float) -> void:
 		velocity.x = v.x
 		velocity.z = v.z
 	else:
-		velocity.x = move_toward(velocity.x, 0.0, movement_speed)
-		velocity.z = move_toward(velocity.z, 0.0, movement_speed)
+		if player:
+			var dir := player.global_transform.origin - global_position
+			dir.y = 0.0
+			dir = dir.normalized()
+			velocity.x = dir.x * movement_speed
+			velocity.z = dir.z * movement_speed
+		else:
+			velocity.x = move_toward(velocity.x, 0.0, movement_speed)
+			velocity.z = move_toward(velocity.z, 0.0, movement_speed)
 
-	# Face the player if known
+	
 	if player:
 		var look := player.global_transform.origin - global_transform.origin
 		look.y = 0.0
@@ -70,7 +73,7 @@ func _physics_process(delta: float) -> void:
 			global_transform.basis = global_transform.basis.slerp(
 				target_basis,
 				clamp(turn_speed * delta, 0.0, 1.0)
-			)
+			).orthonormalized()
 
 	move_and_slide()
 
@@ -103,22 +106,19 @@ func _retarget_now() -> void:
 
 func _resolve_player() -> void:
 	_resolve_attempts += 1
-	# 1) direct reference wins
 	if player_ref and is_instance_valid(player_ref):
 		player = player_ref
 		return
-	# 2) path lookup
 	if player == null and player_path != NodePath():
 		var by_path := get_node_or_null(player_path) as Node3D
 		if by_path:
 			player = by_path
 			return
-	# 3) group fallback
 	if player == null:
 		var by_group := get_tree().get_first_node_in_group("player") as Node3D
 		if by_group:
 			player = by_group
 			return
-	# Debug once in a while so you know it's still resolving
+	# Debug 
 	if _resolve_attempts % 30 == 0:
 		print("Enemy still resolving player... attempt #", _resolve_attempts)
