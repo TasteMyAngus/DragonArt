@@ -21,14 +21,24 @@ enum Weapon { AUTO = 1, BURST = 2, SHOTGUN = 3 }
 var current_weapon: int = Weapon.AUTO
 var can_fire: bool = true 
 
+@export var auto_color: Color    = Color(0.804, 0.141, 0.455)
+@export var burst_color: Color   = Color(1.00, 0.55, 0.15) 
+@export var shotgun_color: Color = Color(0.35, 1.00, 0.35) 
+
+@onready var gun_mesh: MeshInstance3D = $MeshInstance3D
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_1:
 			current_weapon = Weapon.AUTO
+			_set_gun_color(auto_color)
 		elif event.keycode == KEY_2:
 			current_weapon = Weapon.BURST
+			_set_gun_color(burst_color)
 		elif event.keycode == KEY_3:
 			current_weapon = Weapon.SHOTGUN
+			_set_gun_color(shotgun_color)
 
 	if (event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT
@@ -167,8 +177,26 @@ func _shotgun_fire() -> void:
 		
 		show_beam(start_pos, end_pos)
 
+func _set_gun_color(color: Color) -> void:
+	if gun_mesh == null:
+		return
 
+	var base_mat: Material = gun_mesh.material_override
+	if base_mat == null and gun_mesh.mesh and gun_mesh.mesh.get_surface_count() > 0:
+		base_mat = gun_mesh.mesh.surface_get_material(0)
 
-		
-		
+	if base_mat:
+		var mat = base_mat.duplicate() as StandardMaterial3D
+		mat.albedo_color = color
+		gun_mesh.material_override = mat
+	else:
+		var mat = StandardMaterial3D.new()
+		mat.albedo_color = color
+		gun_mesh.material_override = mat
+
+func _ready() -> void:
+	match current_weapon:
+		Weapon.AUTO:    _set_gun_color(auto_color)
+		Weapon.BURST:   _set_gun_color(burst_color)
+		Weapon.SHOTGUN: _set_gun_color(shotgun_color)
 		

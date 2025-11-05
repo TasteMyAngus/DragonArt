@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cm4cw5a8wuvj6" path="res://assets/brushed-silver-metal-texture-polished-metal-texture-background-with-light-reflection-abstract-texture-background-free-photo.jpg" id="2_mm31u"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7c1qe"]
-albedo_color = Color(0.8049066, 0.14182156, 0.4567623, 1)
+albedo_color = Color(0.8039216, 0.14117648, 0.45490196, 1)
 albedo_texture = ExtResource("2_mm31u")
 metallic = 1.0
 
