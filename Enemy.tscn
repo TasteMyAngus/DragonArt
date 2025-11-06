@@ -36,3 +36,4 @@ shape = SubResource("SphereShape3D_tt7e2")
 [node name="HealthBar3D" parent="." instance=ExtResource("2_2hac7")]
 
 [node name="Wyvern_HighPoly" parent="." instance=ExtResource("2_e6d4v")]
+transform = Transform3D(1, 0, 0, 0, 0.040602893, 0.9991755, 0, -0.9991755, 0.040602893, 0, 0, 0)
