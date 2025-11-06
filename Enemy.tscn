@@ -2,13 +2,14 @@
 
 [ext_resource type="Script" uid="uid://byoma02kmigw6" path="res://enemy.gd" id="1_tt7e2"]
 [ext_resource type="PackedScene" uid="uid://dx2f7q60jims5" path="res://HealthBar3D.tscn" id="2_2hac7"]
-[ext_resource type="PackedScene" uid="uid://nxr5t15ki1ae" path="res://assets/Wyvern_HighPoly.glb" id="2_e6d4v"]
+[ext_resource type="PackedScene" uid="uid://vwvudjtu4spj" path="res://assets/Wyvern_HighPoly.glb" id="2_e6d4v"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tlwt5"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tt7e2"]
 
 [node name="enemy" type="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 0.17349349, -0.984835, 0, 0.984835, 0.17349349, 0, 0, 0)
 collision_layer = 2
 floor_snap_length = 0.5
 script = ExtResource("1_tt7e2")
@@ -32,7 +33,6 @@ collision_mask = 4
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
 shape = SubResource("SphereShape3D_tt7e2")
 
-[node name="Wyvern_HighPoly" parent="." instance=ExtResource("2_e6d4v")]
-transform = Transform3D(1, 0, 0, 0, 0.29630822, -0.9550924, 0, 0.9550924, 0.29630822, 0, 0, 0)
-
 [node name="HealthBar3D" parent="." instance=ExtResource("2_2hac7")]
+
+[node name="Wyvern_HighPoly" parent="." instance=ExtResource("2_e6d4v")]

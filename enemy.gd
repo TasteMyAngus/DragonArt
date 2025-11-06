@@ -21,6 +21,13 @@ extends CharacterBody3D
 @export var heal_on_death: int = 5       # how much the player heals when THIS enemy dies
 @export var heal_is_percent: bool = false # if true, treat heal_on_death as % of player's max HP
 
+@export var approach_distance: float = 2.0     # desired stand-off within attack range
+@export var min_distance: float = 1.2          # never come closer than this
+@export var standoff_hysteresis: float = 0.25  # deadzone to prevent jitter
+@export var allow_circle_strafe: bool = true   # circle around player when in range
+@export var strafe_ratio: float = 0.4          # 0..1 of movement_speed used for strafing
+
+
 var player: Node3D = null
 
 var _retarget_timer := 0.0
@@ -68,6 +75,24 @@ func _post_ready() -> void:
 	if player == null:
 		_resolve_player()
 	_retarget_now()
+	
+func _apply_standoff_velocity(base_v: Vector3, dir_to_player: Vector3, dist: float) -> Vector3:
+	var v := base_v
+	# Only constrain movement when we’re within the attack envelope
+	if dist <= attack_range:
+		# Too close: gently back up
+		if dist <= min_distance:
+			v = -dir_to_player * movement_speed
+		# Inside approach ring: stop pushing forward (optional strafe)
+		elif dist <= approach_distance + standoff_hysteresis:
+			v = Vector3.ZERO
+
+		# Add lateral strafe so they don’t just “park”
+		if allow_circle_strafe:
+			var tangent := Vector3(-dir_to_player.z, 0.0, dir_to_player.x) # right-hand perp on XZ
+			v += tangent.normalized() * (movement_speed * strafe_ratio)
+	return v
+
 	
 func _late_init_hb() -> void:
 	_safe_init_healthbar()
@@ -165,19 +190,34 @@ func _physics_process(delta: float) -> void:
 		var next_point: Vector3 = navigation_agent.get_next_path_position()
 		var to_next: Vector3 = next_point - global_position
 		to_next.y = 0.0
-		var v := to_next.normalized() * movement_speed
+		var forward := to_next.normalized() * movement_speed
+
+		# compute player dir/dist once
+		var dirp: Vector3 = Vector3.ZERO
+		var dist := INF
+		if player:
+			var d := player.global_transform.origin - global_position
+			d.y = 0.0
+			dist = d.length()
+			dirp = (d / dist) if dist > 0.001 else Vector3.ZERO
+
+		var v := _apply_standoff_velocity(forward, dirp, dist)
 		velocity.x = v.x
 		velocity.z = v.z
 	else:
 		if player:
-			var dir := player.global_transform.origin - global_position
-			dir.y = 0.0
-			dir = dir.normalized()
-			velocity.x = dir.x * movement_speed
-			velocity.z = dir.z * movement_speed
+			var d := player.global_transform.origin - global_position
+			d.y = 0.0
+			var dist := d.length()
+			var dir := (d / dist) if dist > 0.001 else Vector3.ZERO
+			var forward := dir * movement_speed
+			var v := _apply_standoff_velocity(forward, dir, dist)
+			velocity.x = v.x
+			velocity.z = v.z
 		else:
 			velocity.x = move_toward(velocity.x, 0.0, movement_speed)
 			velocity.z = move_toward(velocity.z, 0.0, movement_speed)
+
 
 	
 	_attack_cd_left = maxf(_attack_cd_left - delta, 0.0)
