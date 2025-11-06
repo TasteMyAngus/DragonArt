@@ -10,6 +10,7 @@ extends CharacterBody3D
 @export var fireball_scene: PackedScene
 @export var fireball_speed: float = 20.0
 @export var fireball_spawn_offset: Vector3 = Vector3(0, 1.5, -1)
+@export var max_health: int = 100
 
 
 @onready var head: Node3D = $Head
@@ -17,9 +18,35 @@ extends CharacterBody3D
 @onready var gun = $Head/Camera3D/Gun
 
 var _mouse_captured := true
+var health: int
+
+signal health_changed(current: int, max: int)
+signal player_died
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	health = max_health
+	emit_signal("health_changed", health, max_health)
+	
+func take_damage(amount: int, from: Node = null) -> void:
+	if amount <= 0 or health <= 0:
+		return
+	health = max(health - amount, 0)
+	emit_signal("health_changed", health, max_health)
+	
+
+	if health == 0:
+		_die()
+
+func heal(amount: int) -> void:
+	if amount <= 0 or health <= 0:
+		return
+	health = min(health + amount, max_health)
+	emit_signal("health_changed", health, max_health)
+
+func _die() -> void:
+	emit_signal("player_died")
+	# optional: show game over, respawn, etc.
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:

@@ -12,6 +12,12 @@ extends CharacterBody3D
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var healthbar_mesh: MeshInstance3D = $HealthBar3D/Bar
+
+@export var attack_range: float = 2.0           # how close to hit the player
+@export var attack_cooldown: float = 1.0        # seconds between hits
+@export var attack_damage: int = 10
+@export var require_los: bool = true            # need clear line of sight
+
 var player: Node3D = null
 
 var _retarget_timer := 0.0
@@ -20,6 +26,7 @@ var _last_target: Vector3 = Vector3.INF
 var _resolve_attempts := 0
 var health := 0
 var hb_mat: ShaderMaterial
+var _attack_cd_left: float = 0.0
 
 func _ready() -> void:
 	navigation_agent.path_desired_distance = 0.3
@@ -156,6 +163,8 @@ func _physics_process(delta: float) -> void:
 			velocity.z = move_toward(velocity.z, 0.0, movement_speed)
 
 	
+	_attack_cd_left = maxf(_attack_cd_left - delta, 0.0)
+	
 	if player:
 		var look := player.global_transform.origin - global_transform.origin
 		look.y = 0.0
@@ -166,7 +175,43 @@ func _physics_process(delta: float) -> void:
 				clamp(turn_speed * delta, 0.0, 1.0)
 			).orthonormalized()
 
+	# attacking
+	_try_attack_player()
+
 	move_and_slide()
+	
+func _try_attack_player() -> void:
+	if player == null or _attack_cd_left > 0.0:
+		return
+
+	# distance check
+	var to_player := player.global_transform.origin - global_transform.origin
+	var horizontal := Vector3(to_player.x, 0.0, to_player.z)
+	var dist := horizontal.length()
+	if dist > attack_range:
+		return
+
+	# optional line of sight (raycast)
+	if require_los:
+		var space := get_world_3d().direct_space_state
+		var from := global_transform.origin + Vector3(0, 1.2, 0)  # chest/eye height
+		var to := player.global_transform.origin + Vector3(0, 1.2, 0)
+		var query := PhysicsRayQueryParameters3D.create(from, to)
+		query.collide_with_areas = false
+		query.exclude = [self.get_rid()]  # ignore self
+
+		var hit: Dictionary = space.intersect_ray(query)
+		if hit.size() > 0:
+			var collider: Object = hit["collider"]        
+			# If ray hits something that is not the player, no LoS
+			if collider != player:
+				return
+
+	# apply damage (player script must have take_damage)
+	if player.has_method("take_damage"):
+		player.take_damage(attack_damage, self)
+
+	_attack_cd_left = attack_cooldown
 
 func _retarget_now() -> void:
 	_retarget_timer = retarget_interval

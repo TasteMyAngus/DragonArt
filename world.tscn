@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bx8elhffrdvid"]
+[gd_scene load_steps=26 format=3 uid="uid://bx8elhffrdvid"]
 
 [ext_resource type="PackedScene" uid="uid://1vfo1m24enjf" path="res://Player/player.tscn" id="1_fj7yv"]
 [ext_resource type="Script" uid="uid://rofpr2ppa0eo" path="res://world.gd" id="1_ioo17"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://46gxsffb50gs" path="res://assets/Brickwall 01.png" id="5_dwbse"]
 [ext_resource type="Texture2D" uid="uid://bupiliuuqu5at" path="res://assets/Brickwall_Protype.png" id="7_pkg7o"]
 [ext_resource type="PackedScene" uid="uid://clvot2jxa2gyc" path="res://PauseMenu.tscn" id="9_wse8f"]
+[ext_resource type="PackedScene" uid="uid://c2ydjcvmvqjq5" path="res://HUD.tscn" id="10_wse8f"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_f3sb7"]
 size = Vector3(1.9876709, 1, 2.003662)
@@ -192,3 +193,5 @@ size = Vector3(10.096436, 7.840515, 14.713318)
 material = SubResource("StandardMaterial3D_ic0uy")
 
 [node name="PauseMenuCanvasLayer" parent="." instance=ExtResource("9_wse8f")]
+
+[node name="HUD" parent="." instance=ExtResource("10_wse8f")]
