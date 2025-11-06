@@ -193,5 +193,6 @@ size = Vector3(10.096436, 7.840515, 14.713318)
 material = SubResource("StandardMaterial3D_ic0uy")
 
 [node name="PauseMenuCanvasLayer" parent="." instance=ExtResource("9_wse8f")]
+layer = 2
 
 [node name="HUD" parent="." instance=ExtResource("10_wse8f")]

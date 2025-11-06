@@ -18,6 +18,9 @@ extends CharacterBody3D
 @export var attack_damage: int = 10
 @export var require_los: bool = true            # need clear line of sight
 
+@export var heal_on_death: int = 10       # how much the player heals when THIS enemy dies
+@export var heal_is_percent: bool = false # if true, treat heal_on_death as % of player's max HP
+
 var player: Node3D = null
 
 var _retarget_timer := 0.0
@@ -27,6 +30,7 @@ var _resolve_attempts := 0
 var health := 0
 var hb_mat: ShaderMaterial
 var _attack_cd_left: float = 0.0
+var _is_dead := false
 
 func _ready() -> void:
 	navigation_agent.path_desired_distance = 0.3
