@@ -177,7 +177,7 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 38.53559, 3.748375, -144.2856
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 transform = Transform3D(9.999998, 0, 0, 0, 3.1488698, 9.491292, 0, -9.491292, 3.1488698, -69.041145, 1.419488, -2.8967113)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" groups=["world"]]
 transform = Transform3D(0.9999879, 0, 0, 0, 1, 5.9604645e-08, 0, -5.9604645e-08, 1, 0, 0.792633, 0.03704825)
 shape = SubResource("BoxShape3D_gbfbk")
 

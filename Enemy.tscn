@@ -9,6 +9,7 @@
 [sub_resource type="SphereShape3D" id="SphereShape3D_tt7e2"]
 
 [node name="enemy" type="CharacterBody3D"]
+collision_layer = 2
 floor_snap_length = 0.5
 script = ExtResource("1_tt7e2")
 gravity = 9.8
@@ -20,12 +21,13 @@ shape = SubResource("BoxShape3D_tlwt5")
 debug_color = Color(0.9372549, 0.09411765, 0.57254905, 1)
 debug_fill = false
 
-[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." groups=["Enemy"]]
 debug_enabled = true
 
-[node name="Hurtbox" type="Area3D" parent="." groups=["damageable"]]
+[node name="Hurtbox" type="Area3D" parent="." groups=["HurtBox", "damageable"]]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.014892578, 0)
-collision_mask = 2
+collision_layer = 8
+collision_mask = 4
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
 shape = SubResource("SphereShape3D_tt7e2")
