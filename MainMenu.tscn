@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://7hpgvsg3n50y" path="res://MainMenu.gd" id="1_i26rj"]
 [ext_resource type="StyleBox" uid="uid://d04hv26p8wnbq" path="res://assets/StyleBoxFlat_Normal.tres" id="2_7r1g0"]
-[ext_resource type="Texture2D" uid="uid://cvffpssyebaut" path="res://assets/dragon.png" id="2_eiy7p"]
 [ext_resource type="StyleBox" uid="uid://8ev46p5q217f" path="res://assets/StyleBoxFlat_Pressed.tres" id="3_cqjrg"]
 [ext_resource type="StyleBox" uid="uid://daggo1rm6wdaq" path="res://assets/StyleBoxFlat_Hover.tres" id="4_e2xy7"]
 [ext_resource type="StyleBox" uid="uid://jweudk74olxn" path="res://assets/StyleBoxFlat_Focus.tres" id="5_fimr5"]
+[ext_resource type="Texture2D" uid="uid://6irfufqup3r2" path="res://assets/ChatGPT Image Nov 5, 2025, 06_30_15 PM_DragonArt_engraved_subtle_4K(1).png" id="6_7r1g0"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -84,6 +84,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 mouse_default_cursor_shape = 2
-texture = ExtResource("2_eiy7p")
+texture = ExtResource("6_7r1g0")
 expand_mode = 1
 stretch_mode = 5

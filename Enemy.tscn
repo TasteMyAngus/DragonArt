@@ -2,10 +2,9 @@
 
 [ext_resource type="Script" uid="uid://byoma02kmigw6" path="res://enemy.gd" id="1_tt7e2"]
 [ext_resource type="PackedScene" uid="uid://dx2f7q60jims5" path="res://HealthBar3D.tscn" id="2_2hac7"]
+[ext_resource type="PackedScene" uid="uid://nxr5t15ki1ae" path="res://assets/Wyvern_HighPoly.glb" id="2_e6d4v"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tlwt5"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_tlwt5"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tt7e2"]
 
@@ -16,12 +15,10 @@ gravity = 9.8
 player_path = NodePath("../Player")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027409196, 0)
+transform = Transform3D(3.7, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0.027409196, 0)
 shape = SubResource("BoxShape3D_tlwt5")
 debug_color = Color(0.9372549, 0.09411765, 0.57254905, 1)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_tlwt5")
+debug_fill = false
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 debug_enabled = true
@@ -32,5 +29,8 @@ collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
 shape = SubResource("SphereShape3D_tt7e2")
+
+[node name="Wyvern_HighPoly" parent="." instance=ExtResource("2_e6d4v")]
+transform = Transform3D(1, 0, 0, 0, 0.29630822, -0.9550924, 0, 0.9550924, 0.29630822, 0, 0, 0)
 
 [node name="HealthBar3D" parent="." instance=ExtResource("2_2hac7")]
