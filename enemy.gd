@@ -18,7 +18,7 @@ extends CharacterBody3D
 @export var attack_damage: int = 10
 @export var require_los: bool = true            # need clear line of sight
 
-@export var heal_on_death: int = 10       # how much the player heals when THIS enemy dies
+@export var heal_on_death: int = 5       # how much the player heals when THIS enemy dies
 @export var heal_is_percent: bool = false # if true, treat heal_on_death as % of player's max HP
 
 var player: Node3D = null
@@ -31,6 +31,7 @@ var health := 0
 var hb_mat: ShaderMaterial
 var _attack_cd_left: float = 0.0
 var _is_dead := false
+var player_health: int
 
 func _ready() -> void:
 	navigation_agent.path_desired_distance = 0.3
@@ -125,7 +126,19 @@ func take_damage(amount: int, hit_pos: Vector3 = global_position) -> void:
 
 
 func die() -> void:
-	# TODO: play death anim/SFX/loo
+	if _is_dead:
+		return
+	_is_dead = true
+	
+	if player and player.has_method("_get_health"):
+		player_health = player._get_health()
+	# Heal the player on kill
+	if player and player.has_method("heal"):
+		if player_health <= 90:
+			player.heal(heal_on_death)
+		else:
+			player.heal(100 - player_health)
+	
 	queue_free()
 
 func _on_hurtbox_body_entered(body: Node) -> void:

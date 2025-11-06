@@ -44,6 +44,9 @@ func heal(amount: int) -> void:
 	health = min(health + amount, max_health)
 	emit_signal("health_changed", health, max_health)
 
+func _get_health():
+	return health
+
 func _die() -> void:
 	emit_signal("player_died")
 	# optional: show game over, respawn, etc.
