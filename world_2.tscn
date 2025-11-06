@@ -1,0 +1,125 @@
+[gd_scene load_steps=17 format=3 uid="uid://c2ur0inqgwqol"]
+
+[ext_resource type="PackedScene" uid="uid://1vfo1m24enjf" path="res://Player/player.tscn" id="1_3m1hs"]
+[ext_resource type="Script" uid="uid://d0hhpdjj21gbo" path="res://world2.gd" id="1_wys1n"]
+[ext_resource type="Texture2D" uid="uid://dw5x0d1saa6ms" path="res://assets/autumn_field_puresky_4k.exr" id="2_ia432"]
+[ext_resource type="PackedScene" uid="uid://c2ydjcvmvqjq5" path="res://HUD.tscn" id="3_hlada"]
+[ext_resource type="PackedScene" uid="uid://clvot2jxa2gyc" path="res://PauseMenu.tscn" id="4_fu0tf"]
+[ext_resource type="Texture2D" uid="uid://csg04j48b080u" path="res://assets/696.jpg" id="5_fu0tf"]
+[ext_resource type="PackedScene" uid="uid://hnyjstadum0d" path="res://moving_platform.tscn" id="6_mv2s0"]
+[ext_resource type="PackedScene" uid="uid://7pqqh2a6u8n0" path="res://moving_platform_horizontal.tscn" id="8_yuvu5"]
+[ext_resource type="PackedScene" uid="uid://b08ockwqrd2q0" path="res://moving_platform_vertical.tscn" id="9_eiokd"]
+[ext_resource type="PackedScene" uid="uid://dkf52nlgfkge3" path="res://moving_platformGreen.tscn" id="10_ngp3s"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_hlada"]
+panorama = ExtResource("2_ia432")
+
+[sub_resource type="Sky" id="Sky_aqk2v"]
+sky_material = SubResource("PanoramaSkyMaterial_hlada")
+
+[sub_resource type="Environment" id="Environment_fu0tf"]
+background_mode = 2
+sky = SubResource("Sky_aqk2v")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mv2s0"]
+size = Vector3(1.9876709, 1, 2.003662)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dwbse"]
+albedo_texture = ExtResource("5_fu0tf")
+uv1_scale = Vector3(9, 9, 9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wys1n"]
+material = SubResource("StandardMaterial3D_dwbse")
+
+[node name="World2" type="Node3D"]
+script = ExtResource("1_wys1n")
+
+[node name="Player" parent="." instance=ExtResource("1_3m1hs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.94932, 8.889519, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_fu0tf")
+
+[node name="HUD" parent="." instance=ExtResource("3_hlada")]
+
+[node name="PauseMenuCanvasLayer" parent="." instance=ExtResource("4_fu0tf")]
+layer = 2
+
+[node name="Floor" type="StaticBody3D" parent="PauseMenuCanvasLayer"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PauseMenuCanvasLayer/Floor"]
+transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 50, 0.10681152, 0, 0.26245117)
+shape = SubResource("BoxShape3D_mv2s0")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PauseMenuCanvasLayer/Floor"]
+transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, 3.0172634, 0)
+mesh = SubResource("BoxMesh_wys1n")
+
+[node name="MovingPlatform" parent="PauseMenuCanvasLayer" instance=ExtResource("6_mv2s0")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.036, 2, 35.591)
+
+[node name="MovingPlatform" parent="." instance=ExtResource("6_mv2s0")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.036, 2, 52.518414)
+
+[node name="MovingPlatform2" parent="." instance=ExtResource("6_mv2s0")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.036, 2, 69.076126)
+
+[node name="MovingPlatformHorizontal" parent="." instance=ExtResource("8_yuvu5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0545549, 1.4031138, 81.32588)
+
+[node name="MovingPlatform3" parent="." instance=ExtResource("6_mv2s0")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.036, 2, 91.14468)
+
+[node name="MovingPlatformHorizontal2" parent="." instance=ExtResource("8_yuvu5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0545549, 1.5415797, 99.91197)
+
+[node name="MovingPlatformHorizontal3" parent="." instance=ExtResource("8_yuvu5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0545549, 1.5415797, 106.808586)
+
+[node name="MovingPlatformHorizontal4" parent="." instance=ExtResource("8_yuvu5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0545549, 1.5415797, 112.93171)
+
+[node name="MovingPlatformVertical" parent="." instance=ExtResource("9_eiokd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0545549, 1.5415797, 121.131935)
+
+[node name="MovingPlatform4" parent="." instance=ExtResource("6_mv2s0")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.036, 7.070477, 137.07126)
+
+[node name="MovingPlatformVertical2" parent="." instance=ExtResource("9_eiokd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0545549, 6.9855213, 145.65918)
+
+[node name="MovingPlatform5" parent="." instance=ExtResource("6_mv2s0")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.036, 14.003136, 156.45012)
+
+[node name="MovingPlatformVertical3" parent="." instance=ExtResource("9_eiokd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3332396, 15.068386, 167.00166)
+
+[node name="MovingPlatform6" parent="." instance=ExtResource("6_mv2s0")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.036, 18.983936, 182.39886)
+
+[node name="MovingPlatformHorizontal5" parent="." instance=ExtResource("8_yuvu5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8948269, 19.295118, 191.2404)
+
+[node name="MovingPlatformVertical4" parent="." instance=ExtResource("9_eiokd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3332396, 19.363176, 198.05476)
+
+[node name="MovingPlatformHorizontal6" parent="." instance=ExtResource("8_yuvu5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8948269, 23.00857, 205.16777)
+
+[node name="MovingPlatformVertical5" parent="." instance=ExtResource("9_eiokd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3332396, 23.130045, 211.13411)
+
+[node name="MovingPlatformHorizontal7" parent="." instance=ExtResource("8_yuvu5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8948269, 25.94173, 218.26553)
+
+[node name="MovingPlatform7" parent="." instance=ExtResource("6_mv2s0")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.3604324, 26.421638, 229.13925)
+
+[node name="MovingPlatform8" parent="." instance=ExtResource("10_ngp3s")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.3604324, 26.421638, 243.4032)
+
+[node name="MovingPlatform9" parent="." instance=ExtResource("6_mv2s0")]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -0.036, 2, 2.2479305)
