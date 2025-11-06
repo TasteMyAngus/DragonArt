@@ -1,0 +1,78 @@
+[gd_scene load_steps=6 format=3 uid="uid://clvot2jxa2gyc"]
+
+[ext_resource type="Script" uid="uid://bwbpe4jbgsghs" path="res://PauseMenu.gd" id="1_36k83"]
+[ext_resource type="StyleBox" uid="uid://d04hv26p8wnbq" path="res://assets/StyleBoxFlat_Normal.tres" id="2_r2gvh"]
+[ext_resource type="StyleBox" uid="uid://8ev46p5q217f" path="res://assets/StyleBoxFlat_Pressed.tres" id="3_sev4g"]
+[ext_resource type="StyleBox" uid="uid://daggo1rm6wdaq" path="res://assets/StyleBoxFlat_Hover.tres" id="4_04dm0"]
+[ext_resource type="StyleBox" uid="uid://jweudk74olxn" path="res://assets/StyleBoxFlat_Focus.tres" id="5_idhon"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+visible = false
+script = ExtResource("1_36k83")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.5019608)
+
+[node name="CenterContainer" type="CenterContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer"]
+layout_mode = 2
+
+[node name="MenuBox" type="VBoxContainer" parent="Control/CenterContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Title" type="Label" parent="Control/CenterContainer/MarginContainer/MenuBox"]
+layout_mode = 2
+
+[node name="ResumeButton" type="Button" parent="Control/CenterContainer/MarginContainer/MenuBox"]
+custom_minimum_size = Vector2(360, 60)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = ExtResource("2_r2gvh")
+theme_override_styles/pressed = ExtResource("3_sev4g")
+theme_override_styles/hover = ExtResource("4_04dm0")
+theme_override_styles/focus = ExtResource("5_idhon")
+
+[node name="MainMenuButton" type="Button" parent="Control/CenterContainer/MarginContainer/MenuBox"]
+custom_minimum_size = Vector2(360, 60)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = ExtResource("2_r2gvh")
+theme_override_styles/pressed = ExtResource("3_sev4g")
+theme_override_styles/hover = ExtResource("4_04dm0")
+theme_override_styles/focus = ExtResource("5_idhon")
+
+[node name="QuitButton" type="Button" parent="Control/CenterContainer/MarginContainer/MenuBox"]
+custom_minimum_size = Vector2(360, 60)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = ExtResource("2_r2gvh")
+theme_override_styles/pressed = ExtResource("3_sev4g")
+theme_override_styles/hover = ExtResource("4_04dm0")
+theme_override_styles/focus = ExtResource("5_idhon")
