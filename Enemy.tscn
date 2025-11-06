@@ -1,12 +1,29 @@
-[gd_scene load_steps=5 format=3 uid="uid://dndwys1devlwi"]
+[gd_scene load_steps=9 format=3 uid="uid://dndwys1devlwi"]
 
 [ext_resource type="Script" uid="uid://byoma02kmigw6" path="res://enemy.gd" id="1_tt7e2"]
+[ext_resource type="PackedScene" uid="uid://dx2f7q60jims5" path="res://HealthBar3D.tscn" id="2_2hac7"]
+[ext_resource type="Shader" uid="uid://bdj1kivjxa11h" path="res://EnemyHealthBar.gdshader" id="3_e6d4v"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tlwt5"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_tlwt5"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tt7e2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qp131"]
+render_priority = 0
+shader = ExtResource("3_e6d4v")
+shader_parameter/fill = 1.0
+shader_parameter/col_back = Color(0.08, 0.08, 0.1, 0.85)
+shader_parameter/col_fill = Color(0.2, 0.85, 0.25, 1)
+shader_parameter/col_border = Color(0, 0, 0, 1)
+shader_parameter/border = 0.08
+shader_parameter/corner = 0.18
+shader_parameter/hurt_flash = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_6do27"]
+material = SubResource("ShaderMaterial_qp131")
+size = Vector2(1.6, 0.18)
 
 [node name="enemy" type="CharacterBody3D"]
 floor_snap_length = 0.5
@@ -31,3 +48,8 @@ collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
 shape = SubResource("SphereShape3D_tt7e2")
+
+[node name="HealthBar3D" parent="." instance=ExtResource("2_2hac7")]
+
+[node name="Bar" type="MeshInstance3D" parent="HealthBar3D"]
+mesh = SubResource("QuadMesh_6do27")

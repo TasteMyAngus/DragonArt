@@ -28,7 +28,8 @@ func open() -> void:
 func close() -> void:
 	get_tree().paused = false
 	hide()
-	# recapture for FPS
+	get_viewport().gui_release_focus()
+	await get_tree().process_frame
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _go_main_menu() -> void:

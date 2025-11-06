@@ -22,10 +22,9 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		_toggle_mouse()
-	if event is InputEventMouseMotion and _mouse_captured:
-		_apply_mouse_look(event)
+	if event is InputEventMouseMotion:
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not get_tree().paused:
+			_apply_mouse_look(event)
 
 func _physics_process(delta: float) -> void:
 	var on_floor := is_on_floor()
@@ -79,6 +78,6 @@ func _apply_mouse_look(event: InputEventMouseMotion) -> void:
 	head.rotate_x(-event.relative.y * mouse_sensitivity)
 	head.rotation_degrees.x = clamp(head.rotation_degrees.x, -89.0, 89.0)
 
-func _toggle_mouse() -> void:
-	_mouse_captured = not _mouse_captured
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if _mouse_captured else Input.MOUSE_MODE_VISIBLE)
+#func _toggle_mouse() -> void:
+#	_mouse_captured = not _mouse_captured
+#	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if _mouse_captured else Input.MOUSE_MODE_VISIBLE)

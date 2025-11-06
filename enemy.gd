@@ -11,6 +11,7 @@ extends CharacterBody3D
 @export var player_ref: Node3D              
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
+@onready var healthbar_mesh: MeshInstance3D = $HealthBar3D/Bar
 var player: Node3D = null
 
 var _retarget_timer := 0.0
@@ -18,6 +19,7 @@ var _nav_map: RID
 var _last_target: Vector3 = Vector3.INF
 var _resolve_attempts := 0
 var health := 0
+var hb_mat: ShaderMaterial
 
 func _ready() -> void:
 	navigation_agent.path_desired_distance = 0.3
@@ -38,6 +40,8 @@ func _ready() -> void:
 		
 	_resolve_player()
 	call_deferred("_post_ready")
+	hb_mat = healthbar_mesh.material_override as ShaderMaterial
+	_update_healthbar_immediate()
 
 func _post_ready() -> void:
 	await get_tree().physics_frame
@@ -45,14 +49,30 @@ func _post_ready() -> void:
 		_resolve_player()
 	_retarget_now()
 	
+func _update_healthbar_immediate() -> void:
+	if hb_mat:
+		hb_mat.set_shader_parameter("fill", float(health) / float(max_health))
+
+func _update_healthbar_smooth() -> void:
+	if hb_mat:
+		var target := float(health) / float(max_health)
+		var current: float = hb_mat.get_shader_parameter("fill")
+		var tw := get_tree().create_tween()
+		tw.tween_method(func(v): hb_mat.set_shader_parameter("fill", v), current, target, 0.15)
+
+	
 func take_damage(amount: int, hit_pos: Vector3 = global_position) -> void:
-	if amount <= 0:
-		return
+	if amount <= 0: return
 	health = max(health - amount, 0)
-	# (Optional) small hit reaction:
-	# show_hit_flash()
+	# optional hurt flash
+	if hb_mat:
+		hb_mat.set_shader_parameter("hurt_flash", 1.0)
+		var tw := get_tree().create_tween()
+		tw.tween_property(hb_mat, "shader_parameter/hurt_flash", 0.0, 0.25)
+	_update_healthbar_smooth()
 	if health == 0:
 		die()
+
 
 func die() -> void:
 	# TODO: play death anim/SFX/loo
