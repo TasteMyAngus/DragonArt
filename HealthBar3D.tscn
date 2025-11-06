@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://c00ff3nnl3kww" path="res://HealthBar3D.gd" id="1_t0855"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_t0855"]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("1_ql3ck")
 shader_parameter/fill = 1.0
@@ -22,5 +23,5 @@ size = Vector2(1.6, 0.18)
 transform = Transform3D(1.3, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 script = ExtResource("1_t0855")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Bar" type="MeshInstance3D" parent="."]
 mesh = SubResource("QuadMesh_l00yr")

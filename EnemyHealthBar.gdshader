@@ -1,5 +1,6 @@
 shader_type spatial;
-render_mode unshaded, cull_disabled, depth_draw_opaque;
+render_mode unshaded, cull_disabled, blend_mix, depth_draw_opaque;
+// render_mode unshaded, cull_disabled, blend_mix, depth_draw_always;
 
 uniform float fill : hint_range(0.0, 1.0) = 1.0;
 uniform vec4 col_back : source_color = vec4(0.08,0.08,0.10,0.85);

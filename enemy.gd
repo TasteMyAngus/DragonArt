@@ -27,6 +27,8 @@ func _ready() -> void:
 	navigation_agent.avoidance_enabled = false
 	navigation_agent.debug_enabled = true
 
+	_safe_init_healthbar()
+	call_deferred("_late_init_hb")
 	_nav_map = get_world_3d().navigation_map
 	if navigation_agent.get_navigation_map() == RID():
 		navigation_agent.set_navigation_map(_nav_map)
@@ -41,7 +43,13 @@ func _ready() -> void:
 	_resolve_player()
 	call_deferred("_post_ready")
 	hb_mat = healthbar_mesh.material_override as ShaderMaterial
-	_update_healthbar_immediate()
+	if hb_mat == null:
+		# fallback to surface material (slot 0) if override not set
+		hb_mat = healthbar_mesh.get_active_material(0) as ShaderMaterial
+	if hb_mat == null:
+		push_warning("Healthbar material not found (need a ShaderMaterial on Bar).")
+	else:
+		_update_healthbar_immediate()
 
 func _post_ready() -> void:
 	await get_tree().physics_frame
@@ -49,16 +57,48 @@ func _post_ready() -> void:
 		_resolve_player()
 	_retarget_now()
 	
+func _late_init_hb() -> void:
+	_safe_init_healthbar()
+	
+func _safe_init_healthbar() -> void:
+	if healthbar_mesh == null:
+		return
+
+	var mat := healthbar_mesh.material_override
+	if mat == null:
+		var surf := healthbar_mesh.get_active_material(0)
+		if surf:
+			mat = surf.duplicate()  # clone so it's not shared
+		else:
+			mat = ShaderMaterial.new()
+	else:
+		if not mat.resource_local_to_scene:
+			mat = mat.duplicate()
+
+	# mark unique to this scene instance and assign back
+	mat.resource_local_to_scene = true
+	healthbar_mesh.material_override = mat
+
+	hb_mat = mat as ShaderMaterial
+	if hb_mat:
+		_update_healthbar_immediate()
+	else:
+		push_warning("Healthbar material is not a ShaderMaterial.")
+
+	
 func _update_healthbar_immediate() -> void:
 	if hb_mat:
-		hb_mat.set_shader_parameter("fill", float(health) / float(max_health))
+		var f := float(health) / float(max_health)
+		hb_mat.set_shader_parameter("fill", f)
+		print("HB fill (immediate) = ", f)
 
 func _update_healthbar_smooth() -> void:
 	if hb_mat:
 		var target := float(health) / float(max_health)
-		var current: float = hb_mat.get_shader_parameter("fill")
+		print("HB fill (target) = ", target)
 		var tw := get_tree().create_tween()
-		tw.tween_method(func(v): hb_mat.set_shader_parameter("fill", v), current, target, 0.15)
+		tw.tween_property(hb_mat, "shader_parameter/fill", target, 0.15)
+
 
 	
 func take_damage(amount: int, hit_pos: Vector3 = global_position) -> void:
@@ -67,8 +107,7 @@ func take_damage(amount: int, hit_pos: Vector3 = global_position) -> void:
 	# optional hurt flash
 	if hb_mat:
 		hb_mat.set_shader_parameter("hurt_flash", 1.0)
-		var tw := get_tree().create_tween()
-		tw.tween_property(hb_mat, "shader_parameter/hurt_flash", 0.0, 0.25)
+		get_tree().create_tween().tween_property(hb_mat, "shader_parameter/hurt_flash", 0.0, 0.25)
 	_update_healthbar_smooth()
 	if health == 0:
 		die()
@@ -148,13 +187,13 @@ func _retarget_now() -> void:
 		_last_target = target_on_nav
 
 		var path := navigation_agent.get_current_navigation_path()
-		if path.size() > 0:
-			print("Enemy path pts=", path.size(),
-				  " first=", path[0],
-				  " last=", path[path.size() - 1],
-				  " target_on_nav=", target_on_nav)
-		else:
-			print("Enemy path pts=0  target_on_nav=", target_on_nav)
+		#if path.size() > 0:
+			#print("Enemy path pts=", path.size(),
+			#	  " first=", path[0],
+			#	  " last=", path[path.size() - 1],
+			#	  " target_on_nav=", target_on_nav)
+		#else:
+			# print("Enemy path pts=0  target_on_nav=", target_on_nav)
 
 func _resolve_player() -> void:
 	_resolve_attempts += 1
